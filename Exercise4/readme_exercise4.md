@@ -10,7 +10,7 @@ Understand Docker networking concepts and configure a multi-container applicatio
 Develop a web application with:
 
 
-* A Python Flask web server (container 1)
+* A Python Flask web server (container 1)    
 * A MySQL database (container 2)
 * A Redis cache (container 3)
 
