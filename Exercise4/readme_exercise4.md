@@ -195,21 +195,5 @@ Output:
 
 my-bridge-net
 
-### Questions:
-
-1. What is the purpose of the --net flag in docker run?
-2. How do containers communicate with each other on the same network?
-3. What is the difference between a bridge network and a host network?
-4. How can you expose a container's port to the host machine?
-
-
-### Answers:
-
-1. The --net flag specifies the network to connect the container to.
-2. Containers communicate using their container names or IP addresses.
-3. A bridge network provides isolation between containers, while a host network shares the host's network stack. Think of it like:
-- Bridge Network: Containers are in a private room, talking to each other through a door.
-- Host Network: Containers are in the same room as the host, talking directly to everyone.
-4. Use the -p flag to expose a container's port (e.g., `-p 500")
 
 

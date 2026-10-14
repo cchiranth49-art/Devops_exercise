@@ -1,0 +1,19 @@
+
+#include <tunables/global>
+
+profile my-apparmor-profile flags=(attach_disconnected) {
+    # Allow the Python interpreter and libraries
+    /usr/local/bin/python3.8 rix,
+    /usr/local/lib/python3.8/** r,
+
+    # Allow application files
+    /app/** rwk,
+
+    # Allow network operations
+    network inet stream,
+    capability net_bind_service,
+
+    # Restrict sensitive files and capabilities
+    deny /etc/shadow r,
+    deny capability sys_admin,
+}
