@@ -1,0 +1,115 @@
+
+pipeline {
+    agent any
+
+    environment {
+        APP_PORT = '5000'
+        APP_PID_FILE = 'flask-app.pid'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+                echo 'Source code checked out successfully.'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                dir('Exercise-9') {
+                    sh '''
+                        python3 -m venv .venv
+                        .venv/bin/python -m pip install --upgrade pip
+                        .venv/bin/pip install -r requirements.txt
+                    '''
+                }
+                echo 'Build completed: dependencies installed.'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                dir('Exercise-9') {
+                    sh '''
+                        .venv/bin/python -m unittest -v test_app.py
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                dir('Exercise-9') {
+                    sh '''
+                        if [ -f "$APP_PID_FILE" ]; then
+                            OLD_PID=$(cat "$APP_PID_FILE")
+                            if kill -0 "$OLD_PID" 2>/dev/null; then
+                                kill "$OLD_PID" || true
+                            fi
+                            rm -f "$APP_PID_FILE"
+                        fi
+
+                        nohup .venv/bin/python app.py \
+                            > flask-app.log 2>&1 &
+
+                        echo $! > "$APP_PID_FILE"
+                    '''
+                }
+            }
+        }
+
+        stage('Verify Deployment') {
+            steps {
+                dir('Exercise-9') {
+                    sh '''
+                        SUCCESS=0
+
+                        for i in $(seq 1 15); do
+                            if curl -fsS \
+                                "http://127.0.0.1:${APP_PORT}/health"; then
+                                SUCCESS=1
+                                break
+                            fi
+                            sleep 2
+                        done
+
+                        if [ "$SUCCESS" -ne 1 ]; then
+                            echo "Health check failed."
+                            cat flask-app.log || true
+                            exit 1
+                        fi
+
+                        echo
+                        echo "Homepage response:"
+                        curl -fsS \
+                            "http://127.0.0.1:${APP_PORT}/"
+                        echo
+                    '''
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            dir('Exercise-9') {
+                sh '''
+                    if [ -f "$APP_PID_FILE" ]; then
+                        PID=$(cat "$APP_PID_FILE")
+                        kill "$PID" 2>/dev/null || true
+                        rm -f "$APP_PID_FILE"
+                    fi
+                '''
+            }
+        }
+
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+
+        failure {
+            echo 'Pipeline failed. Check the Console Output.'
+        }
+    }
+}

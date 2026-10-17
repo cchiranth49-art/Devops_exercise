@@ -1,0 +1,88 @@
+# Exercise 9: Jenkins Multi-Stage Pipeline
+
+## Aim
+To create and execute a Jenkins Declarative Pipeline that automates the checkout, build, testing, deployment, and verification of a Python Flask web application.
+
+## Tools and Technologies Used
+- **Jenkins** – Automation server for executing CI pipelines.
+- **Docker** – Used to run Jenkins in a container.
+- **Git and GitHub** – Source code management and repository hosting.
+- **Python 3** – Programming language used to develop the application.
+- **Flask** – Python web framework used to create the web application.
+- **Jenkins Declarative Pipeline** – Used to define and automate pipeline stages.
+- **VS Code and PowerShell** – Used for development and command execution.
+
+## Project Structure
+
+```text
+Exercise-9/
+├── app.py
+├── requirements.txt
+├── test_app.py
+├── hello-world.sh
+├── Jenkinsfile
+└── README.md
+```
+
+## Procedure
+
+### Step 1: Develop the Flask Application
+Created `app.py` using Flask with two endpoints:
+
+- `/` – Returns the message `Hello, Jenkins Multi-Stage Pipeline!`
+- `/health` – Returns a JSON response indicating that the application is healthy.
+
+### Step 2: Configure Dependencies
+Created `requirements.txt` to specify the Flask and Werkzeug dependencies required by the application.
+
+### Step 3: Write Unit Tests
+Created `test_app.py` using Python's built-in `unittest` framework to test:
+
+- The homepage response and HTTP status code.
+- The health endpoint and its JSON response.
+
+### Step 4: Create the Jenkinsfile
+Created a `Jenkinsfile` defining the stages of the CI pipeline.
+
+The pipeline checks out the source code from GitHub and runs the application-related commands from the `Exercise-9` directory.
+
+### Step 5: Configure the Jenkins Environment
+Started the existing Jenkins Docker container and verified that the required tools were available.
+
+The initial pipeline run failed because Python was not installed in the Jenkins container. Installed Python 3, pip, virtual-environment support, and curl inside the container before rerunning the pipeline.
+
+### Step 6: Configure the Jenkins Pipeline Job
+Created a Jenkins Pipeline job and configured it with the following settings:
+
+- **Repository:** `https://github.com/PrajwinRodrigues/kubernetes-hands-on.git`
+- **Branch:** `main`
+- **Script Path:** `Exercise-9/Jenkinsfile`
+
+### Step 7: Execute the Pipeline
+Triggered the pipeline using **Build Now** in Jenkins.
+
+The pipeline executed the following stages:
+
+1. **Checkout:** Retrieves the source code from GitHub.
+2. **Build:** Creates a Python virtual environment and installs dependencies.
+3. **Test:** Runs automated unit tests.
+4. **Deploy:** Starts the Flask application as a background process.
+5. **Verify Deployment:** Checks the health endpoint and homepage response.
+
+### Step 8: Verify the Result
+Inspected the Jenkins Console Output and verified that the pipeline completed successfully.
+
+The application was started temporarily inside the Jenkins container, checked using HTTP requests, and stopped after the pipeline completed.
+
+## Result
+Successfully implemented and executed a Jenkins Declarative Pipeline that automated source code checkout, dependency installation, unit testing, temporary deployment, and application health verification.
+
+## Conclusion
+This exercise demonstrated how Jenkins Declarative Pipelines can automate multiple stages of a software delivery workflow. Integrating GitHub with Jenkins and incorporating automated tests and health checks provides a foundation for continuous integration and deployment.
+
+## References
+- [Jenkins Pipeline Documentation](https://www.jenkins.io/doc/book/pipeline/)
+- [Jenkinsfile Documentation](https://www.jenkins.io/doc/book/pipeline/jenkinsfile/)
+- [Flask Documentation](https://flask.palletsprojects.com/)
+- [Python unittest Documentation](https://docs.python.org/3/library/unittest.html)
+- [DevOps Lab – Exercise 9: Jenkins Multi-Stage Pipeline](https://github.com/SunagP/DevOps-Lab/blob/main/Exercises/9-Jenkins-Multi-Stage-Pipeline.md)
