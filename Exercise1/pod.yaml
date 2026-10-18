@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hello-k8s
+  labels:
+    run: hello-k8s
+spec:
+  containers:
+  - name: hello-k8s
+    image: nginx
+    ports:
+    - containerPort: 80
